@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "outDir": "dist",
+        "skipLibCheck": true,
+        "moduleResolution": "Node",
+        "module": "CommonJS",
+        "target": "ES2015",
+        "esModuleInterop": true,
+    },
+    "exclude": [
+        "node_modules",
+    ],
+}

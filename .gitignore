@@ -1,0 +1,9 @@
+auth_info.json
+auth_info_md.json
+node_modules
+dist
+*.tar.gz
+*.log
+.env
+yarn-error.log
+src/api
