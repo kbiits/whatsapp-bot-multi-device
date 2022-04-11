@@ -2,6 +2,7 @@ import { proto } from "@adiwajshing/baileys";
 import logger from "../../logger";
 import sock from "../../sock";
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from "../../types/resolver";
+import getAllParticipantsOfGroup from "../../utils/getAllparticipantsOfGroup";
 
 
 const mentionEveryone: ResolverFunctionCarry = (): ResolverFunction => async (message: proto.IWebMessageInfo, jid: string, isFromGroup: Boolean): Promise<ResolverResult> => {
@@ -15,7 +16,7 @@ const mentionEveryone: ResolverFunctionCarry = (): ResolverFunction => async (me
         result.message = { text: "You can only use this feature in a group chat" };
         return result;
     }
-    const participantsJids = (await sock.groupMetadata(jid)).participants.map((p) => p.id) ?? [];
+    const participantsJids = await getAllParticipantsOfGroup(sock, jid);
     logger.info('participants jids');
     logger.info(participantsJids);
     result.message = {

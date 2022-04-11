@@ -4,6 +4,7 @@ import logger from "./logger";
 import sock, { WAMessageUpsert } from "./sock";
 import { ResolverFunction, ResolverResult } from "./types/resolver";
 import checkPrefix from "./utils/checkPrefix";
+import { regexCleanParticipant } from "./utils/getAllparticipantsOfGroup";
 import { getResolver, getResolverWithoutPrefix } from "./utils/resolve";
 
 const developerNumbers = JSON.parse(process.env.DEVELOPER_WHATSAPP_NUMBER);
@@ -12,14 +13,12 @@ const shouldMuteWhenInDevelopment = process.env.MUTE_BOT_WHEN_DEVELOPMENT?.toLow
 const shouldSendWarnIfInDevelopment = process.env.SEND_WARN_IF_IN_DEVELOPMENT?.toLowerCase() === 'true';
 
 const handle = async (msgs: WAMessageUpsert) => {
-    logger.info('dari handle');
-    logger.info(msgs.type)
     msgs.messages.forEach(async msg => {
         sock.readMessages([msg.key]);
         if (!msg.message) return;
         if (msg.key.fromMe) return;
         const jid = msg.key.remoteJid;
-        const participant = msg.participant?.replace(/\:\d*/, '') || msg.key.participant?.replace(/\:\d*/, '');
+        const participant = msg.participant?.replace(regexCleanParticipant, '') || msg.key.participant?.replace(regexCleanParticipant, '');
         const isFromGroup = isJidGroup(jid);
         const messageType: MessageType = Object.keys(msg.message)[0] as MessageType;
         let text: string = '';
@@ -34,7 +33,10 @@ const handle = async (msgs: WAMessageUpsert) => {
         if (!text)
             return;
 
-        logger.info('ini msg')
+        logger.info('got new message')
+        logger.info('message type:');
+        logger.info(msgs.type)
+        logger.info('message:');
         logger.info(msg)
 
         const prefix = await checkPrefix(text.match(/(\S+)/)[1], jid);

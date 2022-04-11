@@ -39,6 +39,4 @@ const connect = () => {
 }
 let sock: WASocket = connect();
 
-logger.info("executed here");
-
 export default sock;

@@ -5,6 +5,7 @@ import { agendaConstDefinition } from '../constants/agenda';
 import logger from '../logger';
 import sock from '../sock';
 import { ReminderScheduleData } from '../types/reminder';
+import getAllParticipantsOfGroup from '../utils/getAllparticipantsOfGroup';
 import { getMentionsFromRoles } from '../utils/sendRoleMention';
 
 export default (agenda: Agenda) => {
@@ -21,8 +22,7 @@ export default (agenda: Agenda) => {
 
             if (data.msg.indexOf('@everyone') !== -1) {
                 // if there's @everyone text in msg
-                const participants = (await sock.groupMetadata(data.jid)).participants;
-                const participantsJids = participants.map((p) => p.id);
+                const participantsJids = await getAllParticipantsOfGroup(sock, data.jid);
 
                 await sock.sendMessage(data.jid, {
                     text: data.msg,

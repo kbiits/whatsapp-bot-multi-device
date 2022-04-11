@@ -1,8 +1,10 @@
-import { MessageType, proto } from "@adiwajshing/baileys";
+import { proto } from "@adiwajshing/baileys";
 import sock from "../sock";
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from "../types/resolver";
+import getAllParticipantsOfGroup, { regexCleanParticipant } from "../utils/getAllparticipantsOfGroup";
 
 const isFeatureNotActive = process.env.JODOHKU_FEATURE_ACTIVE?.toLowerCase() !== 'true';
+const mutedJids: string[] = JSON.parse(process.env.JODOHKU_MUTED_JIDS);
 
 const jodohkuHandler: ResolverFunctionCarry = (): ResolverFunction => async (message: proto.IWebMessageInfo, jid: string, isFromGroup: boolean): Promise<ResolverResult> => {
     if (isFeatureNotActive) {
@@ -21,11 +23,11 @@ const jodohkuHandler: ResolverFunctionCarry = (): ResolverFunction => async (mes
         }
     }
 
-    const participants = (await sock.groupMetadata(jid)).participants.map(p => p.id);
-    const idx = participants.indexOf(message.participant);
+    const participants = await getAllParticipantsOfGroup(sock, jid);
+    const senderJid = message.participant?.replace(regexCleanParticipant, '') || message.key.participant?.replace(regexCleanParticipant, '')
+    const idx = participants.indexOf(senderJid);
     idx !== -1 && participants.splice(idx, 1);
 
-    const mutedJids: Array<string> = JSON.parse(process.env.JODOHKU_MUTED_JIDS);
     if (mutedJids.length) {
         mutedJids.forEach(jid => {
             const idxFound = participants.indexOf(jid);
