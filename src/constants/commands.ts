@@ -1,5 +1,5 @@
 import { helpReply } from '../handlers/help';
-import { convertToSticker } from '../handlers/img2sticker';
+import { convertToSticker } from '../handlers/convert2sticker';
 import { joke } from '../handlers/joke';
 import { loveMeter } from '../handlers/loveMeter';
 import { meme } from '../handlers/meme';

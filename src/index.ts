@@ -18,6 +18,4 @@ if (!DB_URI) {
 
     // start whatsapp connection
     await require('./sock')
-    // start github webhook if whatsapp connection already connected
-    await require('./api/index')
 })().catch((err) => console.log('encountered error : ', err))

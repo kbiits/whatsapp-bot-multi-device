@@ -7,8 +7,8 @@ import { CommandMap } from "../types/command";
 const commandsWithoutPrefix: CommandMap = {
     '@everyone': mentionEveryone,
     '@[A-Za-z]+[\\w-]*': mentionRole,
-    '(?: |^)(?:help|tolong|bantu)(?: |$)': helpWithoutPrefix,
     'jodohku|jodoh *@.+|(?:^| )[sa](?:a+)?y+(?:a+)?(?:n+)?g+': jodohkuHandler,
+    '(?: |^)(?:help|tolong|bantu)(?: |$)': helpWithoutPrefix,
 };
 
 export default commandsWithoutPrefix;

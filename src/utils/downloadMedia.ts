@@ -1,17 +1,17 @@
 import { DownloadableMessage, downloadContentFromMessage, MediaType } from '@adiwajshing/baileys';
+import { Transform } from 'stream';
 
-export const downloadMediaIMessageBuffer = async (mContent: DownloadableMessage, contentType: MediaType, type: 'buffer' | 'stream' = 'buffer') => {
-    const dowloadMediaMessage = async () => {
-        const stream = await downloadContentFromMessage(mContent, contentType);
-        if (type === 'buffer') {
-            let buffer = Buffer.from([]);
-            for await (const chunk of stream) {
-                buffer = Buffer.concat([buffer, chunk]);
-            }
-            return buffer;
+export async function downloadMediaIMessageBuffer(mContent: DownloadableMessage, contentType: MediaType, type: 'buffer'): Promise<Buffer>;
+export async function downloadMediaIMessageBuffer(mContent: DownloadableMessage, contentType: MediaType, type: 'stream'): Promise<Transform>;
+
+export async function downloadMediaIMessageBuffer(mContent: DownloadableMessage, contentType: MediaType, type: 'buffer' | 'stream' = 'buffer') {
+    const stream = await downloadContentFromMessage(mContent, contentType);
+    if (type === 'buffer') {
+        let buffer = Buffer.from([]);
+        for await (const chunk of stream) {
+            buffer = Buffer.concat([buffer, chunk]);
         }
-        return stream;
-    };
-    const buff = await dowloadMediaMessage();
-    return buff;
+        return buffer;
+    }
+    return stream;
 };

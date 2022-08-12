@@ -34,9 +34,15 @@ export default (agenda: Agenda) => {
             let matches = data.msg.trim().match(/@[A-Za-z]+.*/g); // role can only start with alphabet
             if (matches && matches.length) {
                 const mentionedJids = await getMentionsFromRoles(matches, data.jid);
+                let mentions;
+                if(!mentionedJids) {
+                    mentions = uniq(data.mentionedJids);
+                } else {
+                    mentions = uniq([...mentionedJids, ...data.mentionedJids]);
+                }
                 (await sock.sendMessage(data.jid, {
                     text: data.msg,
-                    mentions: uniq([...mentionedJids, ...data.mentionedJids]),
+                    mentions,
                 }));
                 return;
             }

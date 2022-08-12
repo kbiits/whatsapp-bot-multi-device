@@ -28,6 +28,8 @@ const handle = async (msgs: WAMessageUpsert) => {
             text = msg.message?.extendedTextMessage?.text?.trim() ?? '';
         } else if (messageType === 'imageMessage') {
             text = msg.message?.imageMessage?.caption?.trim() ?? '';
+        } else if (messageType === 'videoMessage') {
+            text = msg.message?.videoMessage?.caption?.trim() || '';
         }
 
         if (!text)
