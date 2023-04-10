@@ -5,9 +5,8 @@
   "author": "Nabiel Omar Syarif <nabilumarsyarif294@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@adiwajshing/baileys": "https://github.com/kbiits/Baileys",
+    "@adiwajshing/baileys": "^5.0.0",
     "@hapi/boom": "^9.1.4",
-    "@octokit/webhooks": "^9.23.0",
     "agenda": "^4.3.0",
     "date.js": "^0.3.3",
     "dotenv": "^16.0.3",

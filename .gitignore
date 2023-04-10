@@ -1,5 +1,6 @@
 auth_info.json
 auth_info_md.json
+auth_info_baileys
 node_modules
 dist
 *.tar.gz

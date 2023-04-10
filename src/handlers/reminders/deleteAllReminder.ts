@@ -1,6 +1,6 @@
-import { proto } from '@adiwajshing/baileys';
-import { ResolverResult } from '../../types/resolver';
-import worker from '../../worker';
+import { proto } from "@adiwajshing/baileys";
+import { ResolverResult } from "../../types/resolver";
+import agenda from "../../agendas";
 
 export const deleteAllReminders = async (
   query: any,
@@ -8,7 +8,7 @@ export const deleteAllReminders = async (
   message: proto.IWebMessageInfo
 ): Promise<ResolverResult> => {
   try {
-    const deleted = await worker.cancel(query);
+    const deleted = await agenda.cancel(query);
     return {
       destinationId: jid,
       message: { text: `${deleted} reminders deleted` },
