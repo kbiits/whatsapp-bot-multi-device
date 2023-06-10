@@ -1,4 +1,4 @@
-import { proto } from '@adiwajshing/baileys';
+import { proto } from '@whiskeysockets/baileys';
 import axios from 'axios';
 import { ResolverFunction, ResolverResult } from '../types/resolver';
 const host = process.env.LOVE_CALCULATOR_RAPID_API_HOST;

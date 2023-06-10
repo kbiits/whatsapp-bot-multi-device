@@ -1,4 +1,4 @@
-import { MessageType, proto } from '@adiwajshing/baileys';
+import { MessageType, proto } from '@whiskeysockets/baileys';
 import { commands } from '../constants/commands';
 import PrefixModel from '../models/Prefix';
 import { ResolverFunctionCarry, ResolverResult } from '../types/resolver';

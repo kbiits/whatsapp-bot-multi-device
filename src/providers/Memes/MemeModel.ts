@@ -1,4 +1,4 @@
-import { WAMediaUpload } from '@adiwajshing/baileys';
+import { WAMediaUpload } from '@whiskeysockets/baileys';
 import MimeType from '../../constants/mimetype';
 
 export default interface MemeModel {

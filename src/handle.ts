@@ -1,7 +1,6 @@
-import { isJidGroup, MessageType, proto } from "@adiwajshing/baileys";
+import { isJidGroup, MessageType, MessageUpsertType, proto, WASocket } from "@whiskeysockets/baileys";
 import escapeRegExp from "lodash.escaperegexp";
 import logger from "./logger";
-import sock, { WAMessageUpsert } from "./sock";
 import { ResolverFunction, ResolverResult } from "./types/resolver";
 import checkPrefix from "./utils/checkPrefix";
 import { regexCleanParticipant } from "./utils/getAllparticipantsOfGroup";
@@ -12,7 +11,13 @@ const isDevelopment = process.env.IS_DEVELOPMENT?.toLowerCase() !== 'false';
 const shouldMuteWhenInDevelopment = process.env.MUTE_BOT_WHEN_DEVELOPMENT?.toLowerCase() !== 'false';
 const shouldSendWarnIfInDevelopment = process.env.SEND_WARN_IF_IN_DEVELOPMENT?.toLowerCase() === 'true';
 
-const handle = async (msgs: WAMessageUpsert) => {
+
+export type WAMessageUpsert = {
+    messages: proto.IWebMessageInfo[],
+    type: MessageUpsertType,
+}
+
+const handle = async (msgs: WAMessageUpsert, sock: WASocket) => {
     msgs.messages.forEach(async msg => {
         sock.readMessages([msg.key]);
         if (!msg.message) return;
@@ -21,6 +26,7 @@ const handle = async (msgs: WAMessageUpsert) => {
         const participant = msg.participant?.replace(regexCleanParticipant, '') || msg.key.participant?.replace(regexCleanParticipant, '');
         const isFromGroup = isJidGroup(jid);
         const messageType: MessageType = Object.keys(msg.message)[0] as MessageType;
+
         let text: string = '';
         if (messageType === 'conversation') {
             text = msg.message?.conversation?.trim() ?? '';

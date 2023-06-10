@@ -1,4 +1,4 @@
-import { proto } from '@adiwajshing/baileys';
+import { proto } from '@whiskeysockets/baileys';
 import { ResolverFunction, ResolverResult } from '../types/resolver';
 
 export const wrongCommands: ResolverFunction = (message: proto.IWebMessageInfo, jid: string): ResolverResult => {

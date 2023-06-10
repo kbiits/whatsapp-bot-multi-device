@@ -1,4 +1,4 @@
-// import { MessageType, Mimetype, proto } from '@adiwajshing/baileys';
+// import { MessageType, Mimetype, proto } from '@whiskeysockets/baileys';
 // import conn from '../socketConnection';
 // import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../types/type';
 // import { downloadMediaIMessageBuffer } from '../utils/downloadMedia';

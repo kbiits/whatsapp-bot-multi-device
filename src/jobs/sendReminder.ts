@@ -1,4 +1,4 @@
-import { isJidGroup } from '@adiwajshing/baileys';
+import { isJidGroup } from '@whiskeysockets/baileys';
 import Agenda, { Job } from 'agenda';
 import uniq from 'lodash.uniq';
 import { agendaConstDefinition } from '../constants/agenda';

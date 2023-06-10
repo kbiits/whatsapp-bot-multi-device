@@ -1,4 +1,4 @@
-import { proto } from "@adiwajshing/baileys";
+import { proto } from "@whiskeysockets/baileys";
 import sock from "../sock";
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from "../types/resolver";
 import { helpReply } from "./help";

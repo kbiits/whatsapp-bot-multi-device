@@ -1,4 +1,4 @@
-import { AnyMessageContent, MessageOptions, MessageType, MiscMessageGenerationOptions, proto, WALocationMessage, WAMediaUpload } from '@adiwajshing/baileys';
+import { AnyMessageContent, MessageOptions, MessageType, MiscMessageGenerationOptions, proto, WALocationMessage, WAMediaUpload } from '@whiskeysockets/baileys';
 
 export type ResolverFunction = (message: proto.IWebMessageInfo, jid: string, isFromGroup: Boolean) => Promise<ResolverResult> | ResolverResult;
 export type ResolverFunctionCarry = (matches: RegExpMatchArray) => ResolverFunction;

@@ -1,4 +1,4 @@
-import { proto } from '@adiwajshing/baileys';
+import { proto } from '@whiskeysockets/baileys';
 import InvalidOptionError from '../exceptions/InvalidOptionError';
 import logger from '../logger';
 import { getRandomJokeProvider } from '../providers/Jokes/Joke';

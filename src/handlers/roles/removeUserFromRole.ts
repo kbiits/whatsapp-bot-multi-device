@@ -1,4 +1,4 @@
-import { proto } from '@adiwajshing/baileys';
+import { proto } from '@whiskeysockets/baileys';
 import diff from 'lodash.difference';
 import union from 'lodash.union';
 import RoleModel from '../../models/Role';

@@ -7,3 +7,4 @@ dist
 .env
 yarn-error.log
 src/api
+auth

@@ -1,24 +1,28 @@
-import makeWASocket, { DisconnectReason, MessageUpdateType, proto, useSingleFileAuthState, WASocket } from "@adiwajshing/baileys";
 import { Boom } from "@hapi/boom";
+import makeWASocket, { AuthenticationState, DisconnectReason, useMultiFileAuthState, WASocket } from "@whiskeysockets/baileys";
 import handle from "./handle";
 import logger from "./logger";
 
-export type WAMessageUpsert = {
-    messages: proto.IWebMessageInfo[],
-    type: MessageUpdateType,
-}
-
-const connect = () => {
-    const { state: authState, saveState } = useSingleFileAuthState('./auth_info_md.json');
-
+const connect = (auth: { state: AuthenticationState, saveCreds: () => Promise<void> }) => {
+    const { state: authState } = auth;
     const socketConnection = makeWASocket({
         printQRInTerminal: true,
         auth: authState,
         connectTimeoutMs: 2000,
         logger: logger,
+        version: [2, 2323, 4],
+        shouldIgnoreJid: () => false,
     })
 
-    socketConnection.ev.on('connection.update', (update) => {
+    return socketConnection;
+}
+
+let sock: WASocket;
+(async () => {
+    const auth = await useMultiFileAuthState('./auth');
+    sock = connect(auth);
+
+    sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect } = update;
         if (connection == 'close') {
             const shouldReconnect = (lastDisconnect.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
@@ -26,17 +30,22 @@ const connect = () => {
             logger.warn(lastDisconnect.error);
             logger.warn('reconnect ? ' + shouldReconnect)
             if (shouldReconnect) {
-                sock = connect();
+                sock = connect(auth);
             }
         }
     })
-    socketConnection.ev.on('creds.update', saveState);
-    socketConnection.ev.on('messages.upsert', (msgsUpdate) => {
-        msgsUpdate && (async () => await handle(msgsUpdate))();
-    })
+    // sock.ws.on('CB:message', (d: any) => {
+    //     console.log("ini data nya ya")
+    //     console.log(d)
+    // })
 
-    return socketConnection;
-}
-let sock: WASocket = connect();
+    sock.ev.on('creds.update', auth.saveCreds);
+    sock.ev.on('messages.upsert', (msgsUpdate) => {
+        console.log("ini dia sih asnaoidsnuoasidn\n\n\n");
+
+        logger.info("ini dia msg update", msgsUpdate)
+        msgsUpdate && (async () => await handle(msgsUpdate, sock))();
+    })
+})()
 
 export default sock;

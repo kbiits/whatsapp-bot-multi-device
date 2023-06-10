@@ -1,4 +1,4 @@
-import { proto, WAMessage } from '@adiwajshing/baileys';
+import { proto, WAMessage } from '@whiskeysockets/baileys';
 import { Job, JobAttributesData } from 'agenda';
 // @ts-ignore
 import dateJs from 'date.js';

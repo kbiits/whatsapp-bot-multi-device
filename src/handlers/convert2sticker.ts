@@ -1,13 +1,16 @@
-import { proto } from '@adiwajshing/baileys';
+import { proto } from '@whiskeysockets/baileys';
 import MimeType from '../constants/mimetype';
 import logger from '../logger';
 import sock from '../sock';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../types/resolver';
 import { downloadMediaIMessageBuffer } from '../utils/downloadMedia';
 import { Sticker, StickerTypes } from 'wa-sticker-formatter';
+import Long from 'long';
 
 const allowedMimetype = [MimeType.gif, MimeType.jpeg, MimeType.png, MimeType.mp4];
 const isVideo = (mime: MimeType) => mime === MimeType.gif || mime === MimeType.mp4;
+const stickerImageLimitSize = 2 * 1024 * 1024; // 2MB 
+
 
 export const convertToSticker: ResolverFunctionCarry =
     (): ResolverFunction =>
@@ -27,7 +30,7 @@ export const convertToSticker: ResolverFunctionCarry =
             }
 
             let mime: MimeType;
-            let sizeInBytes: number | Long.Long
+            let sizeInBytes: number | Long
             if (mediaMessage.imageMessage) {
                 mime = mediaMessage.imageMessage.mimetype as MimeType;
                 sizeInBytes = mediaMessage.imageMessage.fileLength;
@@ -36,7 +39,9 @@ export const convertToSticker: ResolverFunctionCarry =
                 sizeInBytes = mediaMessage.videoMessage.fileLength
             }
 
-            if (sizeInBytes > 1024 * 1024 * 2) {
+            const isSizeExceedLimit = sizeInBytes instanceof Long ? sizeInBytes.greaterThan(stickerImageLimitSize) : sizeInBytes > stickerImageLimitSize;
+
+            if (isSizeExceedLimit) {
                 return {
                     destinationId: jid,
                     message: { text: `Cannot convert image with size greater than 2MB` },

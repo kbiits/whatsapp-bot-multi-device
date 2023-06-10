@@ -1,36 +1,43 @@
 {
   "name": "wa-bot-md",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "author": "Nabiel Omar Syarif <nabilumarsyarif294@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc -p .",
+    "start:dev": "cd ../Baileys && yarn build:tsc && cd ../whatsapp-bot-multi-device && tsc -p . && node dist/",
+    "start": "tsc -p . && node dist/"
+  },
   "dependencies": {
-    "@adiwajshing/baileys": "https://github.com/kbiits/Baileys",
+    "@adiwajshing/keyed-db": "^0.2.4",
     "@hapi/boom": "^9.1.4",
-    "@octokit/webhooks": "^9.23.0",
-    "agenda": "^4.3.0",
+    "@whiskeysockets/baileys": "https://github.com/kbiits/Whiskey-Baileys.git",
+    "agenda": "^4.4.0",
+    "axios": "^1.4.0",
     "date.js": "^0.3.3",
-    "dotenv": "^16.0.0",
+    "dotenv": "^16.1.4",
     "fluent-ffmpeg": "^2.1.2",
     "lodash.difference": "^4.5.0",
     "lodash.escaperegexp": "^4.1.2",
     "lodash.union": "^4.6.0",
     "lodash.uniq": "^4.5.0",
-    "mongoose": "^6.2.10",
-    "pino": "^7.9.2",
-    "pino-pretty": "^7.6.0",
+    "long": "^5.2.3",
+    "mongoose": "^6.11.2",
+    "pino": "^7.11.0",
+    "pino-pretty": "^7.6.1",
     "qrcode-terminal": "^0.12.0",
-    "sharp": "^0.30.3",
-    "wa-sticker-formatter": "https://github.com/kbiits/wa-sticker-formatter"
+    "sharp": "^0.30.7",
+    "wa-sticker-formatter": "github:kbiits/wa-sticker-formatter"
   },
   "devDependencies": {
-    "@types/agenda": "^4.1.0",
-    "@types/fluent-ffmpeg": "^2.1.20",
-    "@types/lodash.difference": "^4.5.6",
-    "@types/lodash.escaperegexp": "^4.1.6",
-    "@types/lodash.union": "^4.6.6",
-    "@types/lodash.uniq": "^4.5.6",
-    "@types/node": "^18.0.0",
-    "@types/sharp": "^0.30.1"
+    "@types/fluent-ffmpeg": "^2.1.21",
+    "@types/lodash.difference": "^4.5.7",
+    "@types/lodash.escaperegexp": "^4.1.7",
+    "@types/lodash.union": "^4.6.7",
+    "@types/lodash.uniq": "^4.5.7",
+    "@types/long": "^5.0.0",
+    "@types/node": "^18.16.17",
+    "@types/sharp": "^0.30.5"
   }
 }

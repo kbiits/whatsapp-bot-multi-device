@@ -1,4 +1,4 @@
-import { WASocket } from "@adiwajshing/baileys";
+import { WASocket } from "@whiskeysockets/baileys";
 
 export const regexCleanParticipant = /\:\d*/;
 const getAllParticipantsOfGroup =

@@ -1,4 +1,4 @@
-import { proto } from '@adiwajshing/baileys';
+import { proto } from '@whiskeysockets/baileys';
 import InvalidOptionError from '../exceptions/InvalidOptionError';
 import { MemeNotFound } from '../exceptions/MemeNotFound';
 import { getRandomMemeProvider } from '../providers/Memes/Meme';
