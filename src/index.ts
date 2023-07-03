@@ -6,17 +6,15 @@ if (!DB_URI) {
     throw Error('DB URI Not Found!');
 }
 
-let isDbConnected = false;
-
 (async () => {
     mongoose
         .connect(DB_URI)
         .then(async () => {
-            isDbConnected = true;
             console.log("db connected");
-               
+
             // start whatsapp connection
-            await require('./sock')    
+            const Socket = await import("./sock")
+            await Socket.default.connect()
         })
         .catch((err) => {
             console.log('Failed to connect to db');

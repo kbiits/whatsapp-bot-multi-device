@@ -3,7 +3,7 @@ import Agenda, { Job } from 'agenda';
 import uniq from 'lodash.uniq';
 import { agendaConstDefinition } from '../constants/agenda';
 import logger from '../logger';
-import sock from '../sock';
+import Socket from '../sock';
 import { ReminderScheduleData } from '../types/reminder';
 import getAllParticipantsOfGroup from '../utils/getAllparticipantsOfGroup';
 import { getMentionsFromRoles } from '../utils/sendRoleMention';
@@ -13,7 +13,7 @@ export default (agenda: Agenda) => {
         try {
             const data: ReminderScheduleData = job.attrs.data! as ReminderScheduleData;
             if (!isJidGroup(data.jid)) {
-                await sock.sendMessage(data.jid, {
+                await Socket.socket.sendMessage(data.jid, {
                     text: data.msg,
                     mentions: data.mentionedJids,
                 });
@@ -22,9 +22,9 @@ export default (agenda: Agenda) => {
 
             if (data.msg.indexOf('@everyone') !== -1) {
                 // if there's @everyone text in msg
-                const participantsJids = await getAllParticipantsOfGroup(sock, data.jid);
+                const participantsJids = await getAllParticipantsOfGroup(Socket.socket, data.jid);
 
-                await sock.sendMessage(data.jid, {
+                await Socket.socket.sendMessage(data.jid, {
                     text: data.msg,
                     mentions: participantsJids,
                 });
@@ -35,19 +35,19 @@ export default (agenda: Agenda) => {
             if (matches && matches.length) {
                 const mentionedJids = await getMentionsFromRoles(matches, data.jid);
                 let mentions;
-                if(!mentionedJids) {
+                if (!mentionedJids) {
                     mentions = uniq(data.mentionedJids);
                 } else {
                     mentions = uniq([...mentionedJids, ...data.mentionedJids]);
                 }
-                (await sock.sendMessage(data.jid, {
+                (await Socket.socket.sendMessage(data.jid, {
                     text: data.msg,
                     mentions,
                 }));
                 return;
             }
 
-            await sock.sendMessage(data.jid, {
+            await Socket.socket.sendMessage(data.jid, {
                 mentions: data.mentionedJids,
                 text: data.msg,
             });

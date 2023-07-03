@@ -1,7 +1,7 @@
 import { proto } from '@whiskeysockets/baileys';
 import MimeType from '../constants/mimetype';
 import logger from '../logger';
-import sock from '../sock';
+import Socket from '../sock';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../types/resolver';
 import { downloadMediaIMessageBuffer } from '../utils/downloadMedia';
 import { Sticker, StickerTypes } from 'wa-sticker-formatter';
@@ -73,7 +73,8 @@ export const convertToSticker: ResolverFunctionCarry =
                 }
 
                 buffMedia = await downloadMediaIMessageBuffer(mediaMessage.videoMessage, 'video', 'buffer');
-                sock.sendMessage(jid, {
+                
+                Socket.socket.sendMessage(jid, {
                     text: 'Wait...',
                 })
             } else {
@@ -91,11 +92,11 @@ export const convertToSticker: ResolverFunctionCarry =
                     effort: 6,
                     nearLossless: true,
                 });
-                await sock.sendMessage(jid, await sticker.toMessage());
+                await Socket.socket.sendMessage(jid, await sticker.toMessage());
             } catch (error) {
                 logger.error('error converting to sticker');
                 logger.error(error);
-                sock.sendMessage(jid, {
+                Socket.socket.sendMessage(jid, {
                     text: `Sorry, I can't convert your image to sticker`
                 }, {
                     quoted: message,

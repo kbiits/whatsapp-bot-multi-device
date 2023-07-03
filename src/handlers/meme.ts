@@ -3,7 +3,7 @@ import InvalidOptionError from '../exceptions/InvalidOptionError';
 import { MemeNotFound } from '../exceptions/MemeNotFound';
 import { getRandomMemeProvider } from '../providers/Memes/Meme';
 import MemeModel from '../providers/Memes/MemeModel';
-import sock from '../sock';
+import Socket from '../sock';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../types/resolver';
 
 export const meme: ResolverFunctionCarry =
@@ -14,7 +14,7 @@ export const meme: ResolverFunctionCarry =
                 const memeGenerator = matches[1] ? MemeProvider.getRandomMeme(matches[1].trim()) : MemeProvider.getRandomMeme();
                 for await (const m of memeGenerator) {
                     if (m.loading) {
-                        await sock.sendMessage(jid, {
+                        await Socket.socket.sendMessage(jid, {
                             text: 'Wait a minute',
                         });
                     } else {

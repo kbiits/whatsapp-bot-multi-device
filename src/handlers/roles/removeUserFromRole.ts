@@ -36,7 +36,7 @@ export const removeUserFromRole: ResolverFunctionCarry =
 
       let removedJids: Array<string> = [];
       if (users.indexOf('@me') !== -1) {
-        message.participant && removedJids.push(message.participant);
+        message.key.participant && removedJids.push(message.key.participant);
       }
 
       removedJids = union(removedJids, message.message?.extendedTextMessage?.contextInfo?.mentionedJid ?? []);

@@ -3,8 +3,8 @@ import InvalidOptionError from '../exceptions/InvalidOptionError';
 import logger from '../logger';
 import { getRandomJokeProvider } from '../providers/Jokes/Joke';
 import { JokeModel } from '../providers/Jokes/JokeModel';
-import sock from '../sock';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../types/resolver';
+import Socket from '../sock';
 
 export const joke: ResolverFunctionCarry =
     (matches: RegExpMatchArray): ResolverFunction =>
@@ -26,7 +26,7 @@ export const joke: ResolverFunctionCarry =
                 const jokeGenerator = matches[2] ? JokeProvider.getRandomJoke(matches[2].trim()) : JokeProvider.getRandomJoke();
                 for await (const j of jokeGenerator) {
                     if (j.loading) {
-                        await sock.sendMessage(jid, {
+                        await Socket.socket.sendMessage(jid, {
                             text: 'Wait a minute',
                         });
                     } else {

@@ -1,5 +1,5 @@
 import { proto } from "@whiskeysockets/baileys";
-import sock from "../sock";
+import Socket from "../sock";
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from "../types/resolver";
 import getAllParticipantsOfGroup, { regexCleanParticipant } from "../utils/getAllparticipantsOfGroup";
 
@@ -23,7 +23,7 @@ const jodohkuHandler: ResolverFunctionCarry = (): ResolverFunction => async (mes
         }
     }
 
-    const participants = await getAllParticipantsOfGroup(sock, jid);
+    const participants = await getAllParticipantsOfGroup(Socket.socket, jid);
     const senderJid = message.participant?.replace(regexCleanParticipant, '') || message.key.participant?.replace(regexCleanParticipant, '')
     const idx = participants.indexOf(senderJid);
     idx !== -1 && participants.splice(idx, 1);

@@ -41,11 +41,11 @@ const handle = async (msgs: WAMessageUpsert, sock: WASocket) => {
         if (!text)
             return;
 
-        logger.info('got new message')
-        logger.info('message type:');
-        logger.info(msgs.type)
-        logger.info('message:');
-        logger.info(msg)
+        logger.debug('got new message')
+        logger.debug('message type:');
+        logger.debug(msgs.type)
+        logger.debug('message:');
+        logger.debug(msg)
 
         const prefix = await checkPrefix(text.match(/(\S+)/)[1], jid);
         if (!prefix) {

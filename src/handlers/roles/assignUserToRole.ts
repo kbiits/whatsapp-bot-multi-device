@@ -45,7 +45,7 @@ export const assignUserToRole: ResolverFunctionCarry =
 
       let newJids: Array<string> = [];
       if (participants.indexOf('@me') !== -1) {
-        message.participant && newJids.push(message.participant);
+        message.key.participant && newJids.push(message.key.participant);
       }
       newJids = union(newJids, message.message?.extendedTextMessage?.contextInfo?.mentionedJid ?? [], role.participants);
 
