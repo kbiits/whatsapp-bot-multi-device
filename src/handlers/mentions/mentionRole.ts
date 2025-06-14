@@ -1,4 +1,4 @@
-import { proto } from "@whiskeysockets/baileys";
+import { proto } from 'baileys';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from "../../types/resolver";
 import { sendRoleMention } from "../../utils/sendRoleMention";
 

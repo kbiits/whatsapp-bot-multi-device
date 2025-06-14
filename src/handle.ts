@@ -1,4 +1,4 @@
-import { isJidGroup, MessageType, MessageUpsertType, proto, WASocket } from "@whiskeysockets/baileys";
+import { isJidGroup, MessageType, MessageUpsertType, proto, WASocket } from 'baileys';
 import escapeRegExp from "lodash.escaperegexp";
 import logger from "./logger";
 import { ResolverFunction, ResolverResult } from "./types/resolver";

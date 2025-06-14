@@ -1,4 +1,4 @@
-import { proto } from '@whiskeysockets/baileys';
+import { proto } from 'baileys';
 import { Job } from 'agenda';
 import { agendaConstDefinition } from '../../constants/agenda';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../../types/resolver';

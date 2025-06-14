@@ -1,4 +1,4 @@
-import { proto } from '@whiskeysockets/baileys';
+import { proto } from 'baileys';
 import { ResolverResult } from '../../types/resolver';
 import worker from '../../worker';
 

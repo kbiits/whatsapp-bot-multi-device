@@ -1,4 +1,4 @@
-import { proto } from '@whiskeysockets/baileys';
+import { proto } from 'baileys';
 import RoleModel from '../../models/Role';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../../types/resolver';
 

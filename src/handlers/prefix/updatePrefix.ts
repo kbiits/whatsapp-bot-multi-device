@@ -1,4 +1,4 @@
-import { MessageType, proto } from "@whiskeysockets/baileys";
+import { MessageType, proto } from 'baileys';
 import PrefixModel from "../../models/Prefix";
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from "../../types/resolver";
 

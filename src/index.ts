@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import mongoose from 'mongoose';
+import logger from './logger';
 
 const DB_URI = process.env.MONGODB_URI || null;
 if (!DB_URI) {
@@ -7,12 +8,14 @@ if (!DB_URI) {
 }
 
 (async () => {
+    console.log("Connecting to db...");
     mongoose
         .connect(DB_URI)
         .then(async () => {
             console.log("db connected");
 
             // start whatsapp connection
+            logger.info('Starting WhatsApp connection...');
             const Socket = await import("./sock")
             await Socket.default.connect()
         })

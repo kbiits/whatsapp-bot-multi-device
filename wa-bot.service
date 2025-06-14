@@ -1,0 +1,15 @@
+[Unit]
+Description=Whatsapp Bot App
+After=network.target
+Wants=mongod.service
+
+[Service]
+Type=simple
+Restart=always
+WorkingDirectory=/root/app/wa-bot/whatsapp-bot-multi-device
+ExecStart=/root/app/wa-bot/whatsapp-bot-multi-device/start-app.sh
+Environment=NODE_ENV=production
+EnvironmentFile=/root/app/wa-bot/whatsapp-bot-multi-device/.env
+
+[Install]
+WantedBy=multi-user.target

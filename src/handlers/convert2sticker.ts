@@ -1,4 +1,4 @@
-import { proto } from '@whiskeysockets/baileys';
+import { proto } from 'baileys';
 import MimeType from '../constants/mimetype';
 import logger from '../logger';
 import Socket from '../sock';

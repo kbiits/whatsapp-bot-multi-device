@@ -1,4 +1,4 @@
-import { proto } from "@whiskeysockets/baileys";
+import { proto } from 'baileys';
 import Socket from "../sock";
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from "../types/resolver";
 import getAllParticipantsOfGroup, { regexCleanParticipant } from "../utils/getAllparticipantsOfGroup";

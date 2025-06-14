@@ -5,16 +5,16 @@
   "author": "Nabiel Omar Syarif <nabilumarsyarif294@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p .",
-    "start:dev": "cd ../Baileys && yarn build:tsc && cd ../whatsapp-bot-multi-device && tsc -p . && node dist/",
-    "start": "tsc -p . && node dist/"
+    "build": "tsc",
+    "start:dev": "tsc && node dist/",
+    "start": "tsc && node dist/"
   },
   "dependencies": {
     "@adiwajshing/keyed-db": "^0.2.4",
     "@hapi/boom": "^9.1.4",
-    "@whiskeysockets/baileys": "https://github.com/kbiits/Whiskey-Baileys.git",
     "agenda": "^4.4.0",
     "axios": "^1.4.0",
+    "baileys": "^6.7.18",
     "date.js": "^0.3.3",
     "dotenv": "^16.1.4",
     "fluent-ffmpeg": "^2.1.2",
@@ -26,8 +26,9 @@
     "mongoose": "^6.11.2",
     "pino": "^7.11.0",
     "pino-pretty": "^7.6.1",
+    "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
-    "sharp": "^0.30.7",
+    "sharp": "^0.32.6",
     "wa-sticker-formatter": "github:kbiits/wa-sticker-formatter"
   },
   "devDependencies": {
@@ -38,6 +39,8 @@
     "@types/lodash.uniq": "^4.5.7",
     "@types/long": "^5.0.0",
     "@types/node": "^18.16.17",
-    "@types/sharp": "^0.30.5"
+    "@types/qrcode": "^1.5.5",
+    "@types/sharp": "^0.30.5",
+    "typescript": "^5.8.3"
   }
 }

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "outDir": "dist",
         "skipLibCheck": true,
         "moduleResolution": "Node",

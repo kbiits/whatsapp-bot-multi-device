@@ -1,4 +1,4 @@
-import { proto } from '@whiskeysockets/baileys';
+import { proto } from 'baileys';
 import { getRandomQuoteProvider } from '../providers/Quote';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../types/resolver';
 

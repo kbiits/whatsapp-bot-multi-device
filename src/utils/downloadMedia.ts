@@ -1,4 +1,4 @@
-import { DownloadableMessage, downloadContentFromMessage, MediaType } from '@whiskeysockets/baileys';
+import { DownloadableMessage, downloadContentFromMessage, MediaType } from 'baileys';
 import { Transform } from 'stream';
 
 export async function downloadMediaIMessageBuffer(mContent: DownloadableMessage, contentType: MediaType, type: 'buffer'): Promise<Buffer>;
