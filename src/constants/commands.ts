@@ -15,8 +15,10 @@ import { getUsersForRole } from '../handlers/roles/getUsersForRole';
 import { listRole } from '../handlers/roles/listRole';
 import { removeUserFromRole } from '../handlers/roles/removeUserFromRole';
 import { CommandMap } from '../types/command';
+import sendN8nWebhook from '../handlers/n8n/n8n';
 
 export const commands: CommandMap = {
+    '^AI (.+)$': sendN8nWebhook,
     '^help$': helpReply,
     '^reminders +add +(?:for +time)?(.+) +(?:msg|messages?) ([\\s\\S]+)$': addReminder,
     '^reminders list( with past)?$': getReminders,

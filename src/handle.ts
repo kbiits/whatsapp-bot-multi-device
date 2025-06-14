@@ -96,7 +96,7 @@ const handle = async (msgs: WAMessageUpsert, sock: WASocket) => {
             return;
         }
 
-        const sendMessage: ResolverResult = await resolver(msg, jid, isFromGroup);
+        const sendMessage: ResolverResult = await resolver(msg, jid, isFromGroup, participant);
         if (!sendMessage || !sendMessage.message) return;
         sock.sendMessage(sendMessage.destinationId, sendMessage.message, sendMessage.options);
     };

@@ -9,7 +9,7 @@ Restart=always
 WorkingDirectory=/root/app/wa-bot/whatsapp-bot-multi-device
 ExecStart=/root/app/wa-bot/whatsapp-bot-multi-device/start-app.sh
 Environment=NODE_ENV=production
-EnvironmentFile=/root/app/wa-bot/whatsapp-bot-multi-device/.env
+# EnvironmentFile=/root/app/wa-bot/whatsapp-bot-multi-device/.env
 KillMode=control-group
 TimeoutStopSec=10s
 
