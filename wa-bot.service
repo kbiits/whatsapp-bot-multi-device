@@ -10,6 +10,8 @@ WorkingDirectory=/root/app/wa-bot/whatsapp-bot-multi-device
 ExecStart=/root/app/wa-bot/whatsapp-bot-multi-device/start-app.sh
 Environment=NODE_ENV=production
 EnvironmentFile=/root/app/wa-bot/whatsapp-bot-multi-device/.env
+KillMode=control-group
+TimeoutStopSec=10s
 
 [Install]
 WantedBy=multi-user.target

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-~/.nvm/versions/node/v22.16.0/bin/node dist/ # or whatever your entry point is
+exec /root/.nvm/versions/node/v22.16.0/bin/node dist/ # or whatever your entry point is
