@@ -59,6 +59,14 @@ class Socket {
         return this._sock;
     }
 
+    async sendMessage(to: string, message: string): Promise<void> {
+        if (!this._sock || !this._sock.ws || !this._sock.ws.isOpen) {
+            throw new Error('Socket is not connected');
+        }
+
+        await this._sock.sendMessage(to, { text: message });
+    }
+
     get socket() {
         return this._sock;
     }

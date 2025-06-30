@@ -18,7 +18,7 @@ const gracefulShutdown = async () => {
 
     await sock.socket.ws.close();
     await mongoose.disconnect();
-    logger.warn('App shut down gracefully');
+    logger.info('App shut down gracefully');
     process.exit(0);
 };
 
