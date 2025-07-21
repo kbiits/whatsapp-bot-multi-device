@@ -1,7 +1,7 @@
 import { proto } from "baileys";
 import { ResolverFunctionCarry, ResolverResult } from "../../types/resolver";
 import getSenderPhone from "../../utils/getSender";
-import axios from "axios";
+import axios, { AxiosError, isAxiosError } from "axios";
 import logger from "../../logger";
 
 const developerNumbers = JSON.parse(process.env.DEVELOPER_WHATSAPP_NUMBER);
@@ -43,9 +43,11 @@ const sendN8nWebhook: ResolverFunctionCarry = (matches) => async (message: proto
             message: { text: resp.data.text },
         }
     } catch (error) {
-        logger.error('Error sending webhook to n8n: ' + error?.message || 'null error', {
-            error,
-        });
+        if (isAxiosError(error)) {
+            logger.error({ error, resp: error.response?.data }, 'Error sending webhook to n8n, response failed: ' + error?.message || 'null error');
+        } else {
+            logger.error({ error }, 'Error sending webhook to n8n: ' + (error as Error).message || 'null error');
+        }
     }
 }
 
