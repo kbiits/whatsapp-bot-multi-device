@@ -6,8 +6,10 @@ import logger from "../../logger";
 
 const developerNumbers = JSON.parse(process.env.DEVELOPER_WHATSAPP_NUMBER);
 const webhookUrl = process.env.N8N_WEBHOOK_URL;
+const webhookUsername = process.env.N8N_AUTH_USERNAME;
+const webhookPassword = process.env.N8N_AUTH_PASSWORD;
 if (!webhookUrl) {
-    console.error('N8N Webhook URL is not set in environment variables.');
+    logger.error('N8N Webhook URL is not set in environment variables.');
     process.exit(1);
 }
 
@@ -31,8 +33,8 @@ const sendN8nWebhook: ResolverFunctionCarry = (matches) => async (message: proto
     try {
         const resp = await axios.post(webhookUrl, payload, {
             auth: {
-                username: 'nabiel',
-                password: 'nabiel',
+                username: webhookUsername || '',
+                password: webhookPassword || '',
             },
         })
 
