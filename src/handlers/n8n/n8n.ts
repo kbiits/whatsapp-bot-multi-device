@@ -43,7 +43,7 @@ const sendN8nWebhook: ResolverFunctionCarry = (matches) => async (message: proto
             message: { text: resp.data.text },
         }
     } catch (error) {
-        logger.error('Error sending webhook to n8n:', error);
+        logger.error('Error sending webhook to n8n: ' + error?.message || 'null error', error);
     }
 }
 
