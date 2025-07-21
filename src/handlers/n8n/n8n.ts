@@ -14,12 +14,12 @@ if (!webhookUrl) {
 const sendN8nWebhook: ResolverFunctionCarry = (matches) => async (message: proto.IWebMessageInfo, jid: string, isFromGroup: Boolean, participant: string) => {
     const senderPhone = getSenderPhone(isFromGroup as boolean, participant, jid);
     if (!senderPhone) {
-        console.error('Sender phone number could not be determined.');
+        logger.error('Sender phone number could not be determined.');
         return { message: { text: 'Sender phone number could not be determined.' }, destinationId: jid };
     }
 
     // if (!developerNumbers.includes(senderPhone)) {
-    //     console.warn('Webhook not sent for developer number:', senderPhone);
+    //     logger.warn('Webhook not sent for developer number:', senderPhone);
     //     return null;
     // }
 
