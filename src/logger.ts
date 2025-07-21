@@ -1,25 +1,19 @@
 import pino from "pino";
-import { isColorSupported } from "colorette";
+import PinoPretty from "pino-pretty";
 
 const ENV = process.env.ENVIRONMENT?.toLowerCase() || 'production';
 const logLevel = process.env.LOGGER_LEVEL || (ENV == 'production' ? 'warn' : 'debug');
 
-const logger = pino({
-    transport: {
-        target: 'pino-pretty',
-        options: {
-            colorize: isColorSupported,
-            colorizeObjects: true,
-            crlf: false,
-            errorLikeObjectKeys: ['err', 'error'],
-            levelFirst: true,
-            translateTime: 'SYS:standard',
-            ignore: 'pid,hostname',
-            messageFormat: '{filename} - {msg}',
-
-        },
-    },
-    level: logLevel,
+// Configure pino-pretty for better readability in development
+const prettier = PinoPretty({
+    colorize: true,
+    translateTime: 'SYS:standard',
+    ignore: 'hostname',
+    levelFirst: true,
 });
+
+const logger = pino({
+    level: logLevel,
+}, prettier);
 
 export default logger;
