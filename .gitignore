@@ -8,4 +8,3 @@ dist
 yarn-error.log
 src/api
 auth
-deploy.sh
