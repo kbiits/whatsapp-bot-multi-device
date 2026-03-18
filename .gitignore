@@ -6,5 +6,4 @@ dist
 *.log
 .env
 yarn-error.log
-src/api
 auth
