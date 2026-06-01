@@ -1,4 +1,3 @@
 #!/bin/bash
 
-eval "$(/root/.local/share/fnm/fnm env --use-on-cd --shell bash)"
-exec node dist/ # or whatever your entry point is
+exec /home/ubuntu/.nvm/versions/node/v24.15.0/bin/node dist/ # or whatever your entry point is
