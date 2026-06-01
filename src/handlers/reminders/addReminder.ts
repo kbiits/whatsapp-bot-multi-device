@@ -1,7 +1,7 @@
 import { proto, WAMessage } from 'baileys';
 import { Job, JobAttributesData } from 'agenda';
 // @ts-ignore
-import dateJs from 'date.js';
+import * as chrono from 'chrono-node';
 import { agendaConstDefinition } from '../../constants/agenda';
 import { ReminderScheduleData } from '../../types/reminder';
 import { ResolverFunctionCarry, ResolverResult } from '../../types/resolver';
@@ -10,7 +10,7 @@ import worker from '../../worker';
 const sendBlockedRepeatInterval = (message: WAMessage, jid: string): ResolverResult => {
   return {
     destinationId: jid,
-    message: { text: 'Maaf ya, gak bisa seconds ataupun minutes, terlalu memberatkan server :)' },
+    message: { text: 'Doesn\'t support seconds interval for now' },
     options: {
       quoted: message,
     },
@@ -26,7 +26,7 @@ export const addReminder: ResolverFunctionCarry =
         const cleanRepeatAt = matches[1].replace(/repeat/g, ' ').trim();
         const cleanMsg = matches[2];
 
-        if (cleanRepeatAt.match(/seconds?|minutes?/) && !isShouldNotRepeat) {
+        if (cleanRepeatAt.match(/seconds?/) && !isShouldNotRepeat) {
           return sendBlockedRepeatInterval(message, jid);
         }
 
@@ -36,10 +36,10 @@ export const addReminder: ResolverFunctionCarry =
         };
         mentionedJids && (scheduleData.mentionedJids = mentionedJids);
 
-        const numberNow = Date.now();
-        const date: Date = dateJs(cleanRepeatAt.replace(/ +interval.+/, '').toLowerCase(), numberNow);
+        chrono.parseDate('An appointment on Sep 12-13');
+        const date: Date | null = chrono.parseDate(cleanRepeatAt.replace(/ +interval.+/, '').toLowerCase(), new Date());
 
-        if (numberNow >= date.getTime()) {
+        if (!date) {
           return {
             destinationId: jid,
             message: { text: 'Invalid date format' },
@@ -76,7 +76,7 @@ export const addReminder: ResolverFunctionCarry =
         console.log('error');
         console.log(err);
         return {
-          destinationId: message.key.remoteJid,
+          destinationId: message.key.remoteJid as string,
           message: { text: 'Gagal membuat reminder, Periksa kembali format tanggal' },
           options: {
             quoted: message,
@@ -85,7 +85,7 @@ export const addReminder: ResolverFunctionCarry =
       }
 
       return {
-        destinationId: message.key.remoteJid,
+        destinationId: message.key.remoteJid as string,
         message: { text: 'Reminder created' },
         options: {
           quoted: message,
