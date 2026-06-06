@@ -1,5 +1,5 @@
 import { proto } from 'baileys';
-import { deleteCalendarEvents } from '../../providers/GoogleCalendar';
+import { deleteCalendarEvents, resolveCredentials } from '../../providers/GoogleCalendar';
 import { ResolverResult } from '../../types/resolver';
 import worker from '../../worker';
 
@@ -10,11 +10,21 @@ export const deleteAllReminders = async (
 ): Promise<ResolverResult> => {
   try {
     const jobs = await worker.jobs(query);
-    const gcalEventIds = jobs
-      .map((job) => job.attrs?.data?.gcalEventId)
-      .filter((id): id is string => !!id);
 
-    if (gcalEventIds.length) await deleteCalendarEvents(gcalEventIds);
+    const byOwner = new Map<string, string[]>();
+    for (const job of jobs) {
+      const gcalEventId = job.attrs?.data?.gcalEventId;
+      const gcalOwnerJid = job.attrs?.data?.gcalOwnerJid;
+      if (gcalEventId && gcalOwnerJid) {
+        const list = byOwner.get(gcalOwnerJid) || [];
+        list.push(gcalEventId);
+        byOwner.set(gcalOwnerJid, list);
+      }
+    }
+    for (const [ownerJid, eventIds] of byOwner) {
+      const creds = await resolveCredentials(ownerJid);
+      if (creds) await deleteCalendarEvents(creds, eventIds);
+    }
 
     const deleted = await worker.cancel(query);
     return {

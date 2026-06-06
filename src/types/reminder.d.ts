@@ -4,4 +4,5 @@ export type ReminderScheduleData = {
     mentionedJids?: string[];
     gcalEventId?: string;
     gcalHtmlLink?: string;
+    gcalOwnerJid?: string;
 };

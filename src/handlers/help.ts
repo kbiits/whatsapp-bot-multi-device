@@ -81,7 +81,19 @@ const helps = [
     [
         'change prefix _{new-prefix}_',
         '(Change bot prefix, only works inside a group chat)'
-    ]
+    ],
+    [
+        'gcal setup _{client-email}_ _{private-key}_ _{calendar-id}_',
+        '(Set up your Google Calendar credentials for --gcal sync)'
+    ],
+    [
+        'gcal remove',
+        '(Remove your Google Calendar credentials)'
+    ],
+    [
+        'gcal status',
+        '(Check your Google Calendar configuration)'
+    ],
 ];
 
 const buildHelpMessage = (prefix: string): string => {

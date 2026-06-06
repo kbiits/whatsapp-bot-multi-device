@@ -4,17 +4,13 @@ import { Job, JobAttributesData } from 'agenda';
 import * as chrono from 'chrono-node';
 import { agendaConstDefinition } from '../../constants/agenda';
 import { TIMEZONE } from '../../constants/timezone';
-import { createCalendarEvent } from '../../providers/GoogleCalendar';
+import { createCalendarEvent, resolveCredentials } from '../../providers/GoogleCalendar';
 import { ReminderScheduleData } from '../../types/reminder';
 import { ResolverFunctionCarry, ResolverResult } from '../../types/resolver';
 import worker from '../../worker';
 
 const DEFAULT_EVENT_DURATION_MS = 30 * 60 * 1000;
 
-/**
- * Parse a duration string like "1h", "30m", "1h30m", "90m" into milliseconds.
- * Returns null if the format is invalid.
- */
 function parseDuration(input: string): number | null {
   const match = input.trim().match(/^(?:(\d+)h)?(?:(\d+)m)?$/i);
   if (!match || (!match[1] && !match[2])) return null;
@@ -36,7 +32,7 @@ const sendBlockedRepeatInterval = (message: WAMessage, jid: string): ResolverRes
 
 export const addReminder: ResolverFunctionCarry =
   (matches: RegExpMatchArray) =>
-    async (message: proto.IWebMessageInfo, jid: string): Promise<ResolverResult> => {
+    async (message: proto.IWebMessageInfo, jid: string, isFromGroup: Boolean, participant: string): Promise<ResolverResult> => {
       const mentionedJids = message.message?.extendedTextMessage?.contextInfo?.mentionedJid;
       const gcalFlag = matches[3]?.trim();
       const syncToGcal = !!gcalFlag;
@@ -48,6 +44,8 @@ export const addReminder: ResolverFunctionCarry =
           if (parsed) gcalDurationMs = parsed;
         }
       }
+
+      const senderJid = isFromGroup ? participant : jid;
       const scheduleData: ReminderScheduleData = { jid, msg: '' };
       try {
         const isShouldNotRepeat = matches[1].indexOf('repeat') === -1;
@@ -75,34 +73,50 @@ export const addReminder: ResolverFunctionCarry =
 
         let repeatIntervalStr: string | undefined;
 
-        if (isShouldNotRepeat) {
-          if (syncToGcal) {
-            const gcalResult = await createCalendarEvent(cleanMsg, date, gcalDurationMs);
-            if (gcalResult) {
-              scheduleData.gcalEventId = gcalResult.eventId;
-              scheduleData.gcalHtmlLink = gcalResult.htmlLink;
-            }
-          }
-          await worker.schedule(date, agendaConstDefinition.send_reminder, scheduleData);
-        } else {
-          let regexRes = cleanRepeatAt.match(/ +interval +(.+)/);
-          if (!regexRes) {
+        if (syncToGcal) {
+          const creds = await resolveCredentials(senderJid);
+          if (!creds) {
             return {
               destinationId: jid,
-              message: { text: 'Please specify interval for repeated reminder' },
-              options: {
-                quoted: message,
+              message: {
+                text: 'Google Calendar is not configured. Use "gcal setup" to set up your credentials first.',
               },
+              options: { quoted: message },
             };
           }
 
-          repeatIntervalStr = regexRes[1];
-          if (syncToGcal) {
-            const gcalResult = await createCalendarEvent(cleanMsg, date, gcalDurationMs, repeatIntervalStr);
-            if (gcalResult) {
-              scheduleData.gcalEventId = gcalResult.eventId;
-              scheduleData.gcalHtmlLink = gcalResult.htmlLink;
+          const gcalResult = isShouldNotRepeat
+            ? await createCalendarEvent(creds, cleanMsg, date, gcalDurationMs)
+            : await createCalendarEvent(creds, cleanMsg, date, gcalDurationMs, (repeatIntervalStr = cleanRepeatAt.match(/ +interval +(.+)/)?.[1]));
+
+          if (!isShouldNotRepeat && !repeatIntervalStr) {
+            return {
+              destinationId: jid,
+              message: { text: 'Please specify interval for repeated reminder' },
+              options: { quoted: message },
+            };
+          }
+
+          if (gcalResult) {
+            scheduleData.gcalEventId = gcalResult.eventId;
+            scheduleData.gcalHtmlLink = gcalResult.htmlLink;
+            scheduleData.gcalOwnerJid = senderJid;
+          }
+        }
+
+        if (isShouldNotRepeat) {
+          await worker.schedule(date, agendaConstDefinition.send_reminder, scheduleData);
+        } else {
+          if (!repeatIntervalStr) {
+            const regexRes = cleanRepeatAt.match(/ +interval +(.+)/);
+            if (!regexRes) {
+              return {
+                destinationId: jid,
+                message: { text: 'Please specify interval for repeated reminder' },
+                options: { quoted: message },
+              };
             }
+            repeatIntervalStr = regexRes[1];
           }
 
           const job: Job<JobAttributesData> = worker.create(agendaConstDefinition.send_reminder, scheduleData);

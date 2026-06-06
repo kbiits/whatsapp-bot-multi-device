@@ -1,46 +1,75 @@
 import { google, calendar_v3 } from 'googleapis';
 import { TIMEZONE } from '../constants/timezone';
 import logger from '../logger';
+import GcalConfigModel, { GcalConfig } from '../models/GcalConfig';
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
-let calendarClient: calendar_v3.Calendar | null = null;
+const developerNumbers: string[] = JSON.parse(process.env.DEVELOPER_WHATSAPP_NUMBER || '[]');
 
-function isConfigured(): boolean {
-  return !!(
+export interface GcalCredentials {
+  clientEmail: string;
+  privateKey: string;
+  calendarId: string;
+}
+
+function getEnvCredentials(): GcalCredentials | null {
+  if (
     process.env.GOOGLE_CALENDAR_CLIENT_EMAIL &&
     process.env.GOOGLE_CALENDAR_PRIVATE_KEY &&
     process.env.GOOGLE_CALENDAR_ID
-  );
+  ) {
+    return {
+      clientEmail: process.env.GOOGLE_CALENDAR_CLIENT_EMAIL,
+      privateKey: process.env.GOOGLE_CALENDAR_PRIVATE_KEY,
+      calendarId: process.env.GOOGLE_CALENDAR_ID,
+    };
+  }
+  return null;
 }
 
-function getClient(): calendar_v3.Calendar {
-  if (calendarClient) return calendarClient;
+function isDeveloper(senderJid: string): boolean {
+  return developerNumbers.includes(senderJid);
+}
 
+/**
+ * Resolve credentials for a sender:
+ * - Developer numbers use .env credentials
+ * - Other users use their own credentials stored in MongoDB
+ */
+export async function resolveCredentials(senderJid: string): Promise<GcalCredentials | null> {
+  if (isDeveloper(senderJid)) {
+    return getEnvCredentials();
+  }
+
+  const config = await GcalConfigModel.findOne({ jid: senderJid }).lean<GcalConfig>();
+  if (!config) return null;
+
+  return {
+    clientEmail: config.clientEmail,
+    privateKey: config.privateKey,
+    calendarId: config.calendarId,
+  };
+}
+
+function buildClient(creds: GcalCredentials): calendar_v3.Calendar {
   const auth = new google.auth.JWT({
-    email: process.env.GOOGLE_CALENDAR_CLIENT_EMAIL,
-    key: process.env.GOOGLE_CALENDAR_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+    email: creds.clientEmail,
+    key: creds.privateKey.replace(/\\n/g, '\n'),
     scopes: SCOPES,
   });
-
-  calendarClient = google.calendar({ version: 'v3', auth });
-  return calendarClient;
-}
-
-function getCalendarId(): string {
-  return process.env.GOOGLE_CALENDAR_ID!;
+  return google.calendar({ version: 'v3', auth });
 }
 
 export async function createCalendarEvent(
+  creds: GcalCredentials,
   summary: string,
   startDate: Date,
   durationMs: number = 30 * 60 * 1000,
   repeatInterval?: string,
 ): Promise<{ eventId: string; htmlLink: string } | null> {
-  if (!isConfigured()) return null;
-
   try {
-    const calendar = getClient();
+    const calendar = buildClient(creds);
     const endDate = new Date(startDate.getTime() + durationMs);
 
     const event: calendar_v3.Schema$Event = {
@@ -53,7 +82,7 @@ export async function createCalendarEvent(
         dateTime: endDate.toISOString(),
         timeZone: TIMEZONE,
       },
-      description: `WhatsApp Bot Reminder`,
+      description: 'WhatsApp Bot Reminder',
     };
 
     if (repeatInterval) {
@@ -64,7 +93,7 @@ export async function createCalendarEvent(
     }
 
     const res = await calendar.events.insert({
-      calendarId: getCalendarId(),
+      calendarId: creds.calendarId,
       requestBody: event,
     });
 
@@ -80,13 +109,14 @@ export async function createCalendarEvent(
   }
 }
 
-export async function deleteCalendarEvent(eventId: string): Promise<boolean> {
-  if (!isConfigured()) return false;
-
+export async function deleteCalendarEvent(
+  creds: GcalCredentials,
+  eventId: string,
+): Promise<boolean> {
   try {
-    const calendar = getClient();
+    const calendar = buildClient(creds);
     await calendar.events.delete({
-      calendarId: getCalendarId(),
+      calendarId: creds.calendarId,
       eventId,
     });
     logger.info(`Google Calendar event deleted: ${eventId}`);
@@ -98,24 +128,19 @@ export async function deleteCalendarEvent(eventId: string): Promise<boolean> {
   }
 }
 
-export async function deleteCalendarEvents(eventIds: string[]): Promise<number> {
-  if (!isConfigured()) return 0;
-
+export async function deleteCalendarEvents(
+  creds: GcalCredentials,
+  eventIds: string[],
+): Promise<number> {
   let deleted = 0;
   for (const eventId of eventIds) {
-    if (await deleteCalendarEvent(eventId)) {
+    if (await deleteCalendarEvent(creds, eventId)) {
       deleted++;
     }
   }
   return deleted;
 }
 
-/**
- * Convert human-readable interval strings (used by Agenda's repeatEvery)
- * into RFC 5545 RRULE format for Google Calendar.
- *
- * Supports: "1 day", "2 hours", "3 weeks", "1 month", "30 minutes", etc.
- */
 function intervalToRRule(interval: string): string | null {
   const match = interval.trim().match(/^(\d+)\s*(second|minute|hour|day|week|month|year)s?$/i);
   if (!match) return null;

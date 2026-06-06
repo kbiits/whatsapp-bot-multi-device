@@ -1,6 +1,6 @@
 import { proto } from 'baileys';
 import { agendaConstDefinition } from '../../constants/agenda';
-import { deleteCalendarEvent, deleteCalendarEvents } from '../../providers/GoogleCalendar';
+import { deleteCalendarEvent, deleteCalendarEvents, resolveCredentials } from '../../providers/GoogleCalendar';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../../types/resolver';
 import worker from '../../worker';
 import { deleteAllReminders } from './deleteAllReminder';
@@ -34,12 +34,16 @@ export const deleteReminder: ResolverFunctionCarry =
         const nthDelete = parseInt(idsDelete[0]);
         const job = jobs[nthDelete - 1];
         const gcalEventId = job.attrs?.data?.gcalEventId;
-        if (gcalEventId) await deleteCalendarEvent(gcalEventId);
+        const gcalOwnerJid = job.attrs?.data?.gcalOwnerJid;
+        if (gcalEventId && gcalOwnerJid) {
+          const creds = await resolveCredentials(gcalOwnerJid);
+          if (creds) await deleteCalendarEvent(creds, gcalEventId);
+        }
         await job.remove();
         count = 1;
       } else {
         const jids = [];
-        const gcalEventIds: string[] = [];
+        const gcalJobs: Array<{ eventId: string; ownerJid: string }> = [];
         for (const idx of idsDelete) {
           const position = parseInt(idx) - 1;
           if (!jobs[position]) {
@@ -52,11 +56,24 @@ export const deleteReminder: ResolverFunctionCarry =
             };
           }
           jids.push(jobs[position].attrs._id);
-          const gcalId = jobs[position].attrs?.data?.gcalEventId;
-          if (gcalId) gcalEventIds.push(gcalId);
+          const gcalEventId = jobs[position].attrs?.data?.gcalEventId;
+          const gcalOwnerJid = jobs[position].attrs?.data?.gcalOwnerJid;
+          if (gcalEventId && gcalOwnerJid) {
+            gcalJobs.push({ eventId: gcalEventId, ownerJid: gcalOwnerJid });
+          }
         }
         try {
-          if (gcalEventIds.length) await deleteCalendarEvents(gcalEventIds);
+          const byOwner = new Map<string, string[]>();
+          for (const { eventId, ownerJid } of gcalJobs) {
+            const list = byOwner.get(ownerJid) || [];
+            list.push(eventId);
+            byOwner.set(ownerJid, list);
+          }
+          for (const [ownerJid, eventIds] of byOwner) {
+            const creds = await resolveCredentials(ownerJid);
+            if (creds) await deleteCalendarEvents(creds, eventIds);
+          }
+
           const deletedCount = await worker.cancel({
             _id: {
               $in: jids,
@@ -75,8 +92,6 @@ export const deleteReminder: ResolverFunctionCarry =
           };
         }
       }
-
-      // await jobs[nthDelete - 1].remove();
 
       return {
         destinationId: jid,

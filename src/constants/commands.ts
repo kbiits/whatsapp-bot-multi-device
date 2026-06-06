@@ -14,6 +14,9 @@ import { deleteRole } from '../handlers/roles/deleteRole';
 import { getUsersForRole } from '../handlers/roles/getUsersForRole';
 import { listRole } from '../handlers/roles/listRole';
 import { removeUserFromRole } from '../handlers/roles/removeUserFromRole';
+import { gcalRemove } from '../handlers/gcal/remove';
+import { gcalSetup } from '../handlers/gcal/setup';
+import { gcalStatus } from '../handlers/gcal/status';
 import { CommandMap } from '../types/command';
 import sendN8nWebhook from '../handlers/n8n/n8n';
 
@@ -43,4 +46,8 @@ export const commands: CommandMap = {
     '^users? in roles? ([A-Za-z0-9-_@]+)$': getUsersForRole,
 
     '^change prefix (?:to )?(\\S+)$': updatePrefix,
+
+    '^gcal +setup +(\\S+) +(\\S+) +(\\S+)$': gcalSetup,
+    '^gcal +(?:remove|delete)$': gcalRemove,
+    '^gcal +status$': gcalStatus,
 };
