@@ -19,6 +19,7 @@
     "date.js": "^0.3.3",
     "dotenv": "^16.1.4",
     "fluent-ffmpeg": "^2.1.2",
+    "googleapis": "^173.0.0",
     "lodash.difference": "^4.5.0",
     "lodash.escaperegexp": "^4.1.2",
     "lodash.union": "^4.6.0",

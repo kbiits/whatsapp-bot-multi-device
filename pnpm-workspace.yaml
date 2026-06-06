@@ -2,3 +2,11 @@ onlyBuiltDependencies:
   - baileys
   - protobufjs
   - sharp
+  - wa-sticker-formatter
+
+
+allowBuilds:
+  baileys: true
+  protobufjs: true
+  sharp: true
+  wa-sticker-formatter: true

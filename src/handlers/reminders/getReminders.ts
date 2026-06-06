@@ -1,6 +1,7 @@
 import { proto } from 'baileys';
 import { Job } from 'agenda';
 import { agendaConstDefinition } from '../../constants/agenda';
+import { TIMEZONE } from '../../constants/timezone';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../../types/resolver';
 import worker from '../../worker';
 
@@ -37,7 +38,7 @@ export const getReminders: ResolverFunctionCarry =
 
       let sendMessage = 'List Reminders\n';
       const formatDateOption: Intl.DateTimeFormatOptions = {
-        timeZone: 'Asia/Jakarta',
+        timeZone: TIMEZONE,
         hour12: true,
         weekday: 'long',
         month: 'long',
@@ -49,8 +50,9 @@ export const getReminders: ResolverFunctionCarry =
       };
 
       jobs.forEach((job: Job, i: number) => {
+        const gcalLink = job.attrs?.data?.gcalHtmlLink;
         sendMessage += `\n${i + 1}. Message : ${job.attrs?.data?.msg ?? '(Tidak ada message)'}\n    Next Run At : ${job.attrs.nextRunAt?.toLocaleString('id-ID', formatDateOption) || '(Nothing)'
-          }${job.attrs.repeatInterval ? `\n    Repeat every : ${job.attrs.repeatInterval}` : ''}`;
+          }${job.attrs.repeatInterval ? `\n    Repeat every : ${job.attrs.repeatInterval}` : ''}${gcalLink ? `\n    📅 Calendar : ${gcalLink}` : ''}`;
       });
 
       return {

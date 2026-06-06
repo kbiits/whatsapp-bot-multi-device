@@ -11,12 +11,12 @@ const helps = [
         '(Show this message)',
     ],
     [
-        'reminders add _{time}_ msg _{msg}_',
-        '(Add reminder)'
+        'reminders add _{time}_ msg _{msg}_ [--gcal [duration]]',
+        '(Add reminder. Use --gcal to sync to Google Calendar, e.g. --gcal 1h30m)'
     ],
     [
-        'reminders add _{time}_ interval _{interval}_ repeat msg _{msg}_ ',
-        '(Add repeated reminder, don\'t forget to set the interval)'
+        'reminders add _{time}_ interval _{interval}_ repeat msg _{msg}_ [--gcal [duration]]',
+        '(Add repeated reminder. Use --gcal to sync to Google Calendar, e.g. --gcal 45m)'
     ],
     [
         'reminders list',

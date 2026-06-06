@@ -20,7 +20,7 @@ import sendN8nWebhook from '../handlers/n8n/n8n';
 export const commands: CommandMap = {
     '^AI (.+)$': sendN8nWebhook,
     '^help$': helpReply,
-    '^(?:reminders?|rem) +add +(?:for +time)?(.+) +(?:msg|messages?) ([\\s\\S]+)$': addReminder,
+    '^(?:reminders?|rem) +add +(?:for +time)?(.+) +(?:msg|messages?) ([\\s\\S]+?)( --gcal(?:[ =]\\S+)?)?$': addReminder,
     '^(?:reminders?|rem) list( with past)?$': getReminders,
     '^(?:reminders?|rem) delete?( with past)? ([0-9,\\s]+|all)$': deleteReminder,
 

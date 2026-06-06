@@ -1,5 +1,6 @@
 import { proto } from 'baileys';
 import { agendaConstDefinition } from '../../constants/agenda';
+import { deleteCalendarEvent, deleteCalendarEvents } from '../../providers/GoogleCalendar';
 import { ResolverFunction, ResolverFunctionCarry, ResolverResult } from '../../types/resolver';
 import worker from '../../worker';
 import { deleteAllReminders } from './deleteAllReminder';
@@ -31,10 +32,14 @@ export const deleteReminder: ResolverFunctionCarry =
 
       if (idsDelete.length == 1) {
         const nthDelete = parseInt(idsDelete[0]);
-        await jobs[nthDelete - 1].remove();
+        const job = jobs[nthDelete - 1];
+        const gcalEventId = job.attrs?.data?.gcalEventId;
+        if (gcalEventId) await deleteCalendarEvent(gcalEventId);
+        await job.remove();
         count = 1;
       } else {
         const jids = [];
+        const gcalEventIds: string[] = [];
         for (const idx of idsDelete) {
           const position = parseInt(idx) - 1;
           if (!jobs[position]) {
@@ -47,8 +52,11 @@ export const deleteReminder: ResolverFunctionCarry =
             };
           }
           jids.push(jobs[position].attrs._id);
+          const gcalId = jobs[position].attrs?.data?.gcalEventId;
+          if (gcalId) gcalEventIds.push(gcalId);
         }
         try {
+          if (gcalEventIds.length) await deleteCalendarEvents(gcalEventIds);
           const deletedCount = await worker.cancel({
             _id: {
               $in: jids,

@@ -1,6 +1,8 @@
+import { TIMEZONE } from '../constants/timezone';
+
 export const formatDate = (date: Date) => {
     const dateFormat = Intl.DateTimeFormat("id-ID", {
-        timeZone: "Asia/Jakarta",
+        timeZone: TIMEZONE,
         hour12: true,
         dayPeriod: "long",
         month: "long",

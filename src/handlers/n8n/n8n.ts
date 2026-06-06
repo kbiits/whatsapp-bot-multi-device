@@ -8,12 +8,13 @@ const developerNumbers = JSON.parse(process.env.DEVELOPER_WHATSAPP_NUMBER);
 const webhookUrl = process.env.N8N_WEBHOOK_URL;
 const webhookUsername = process.env.N8N_AUTH_USERNAME;
 const webhookPassword = process.env.N8N_AUTH_PASSWORD;
-if (!webhookUrl) {
-    logger.error('N8N Webhook URL is not set in environment variables.');
-    process.exit(1);
-}
 
 const sendN8nWebhook: ResolverFunctionCarry = (matches) => async (message: proto.IWebMessageInfo, jid: string, isFromGroup: Boolean, participant: string) => {
+    if (!webhookUrl) {
+        logger.error('N8N Webhook URL is not set in environment variables.');
+        process.exit(1);
+    }
+
     const senderPhone = getSenderPhone(isFromGroup as boolean, participant, jid);
     if (!senderPhone) {
         logger.error('Sender phone number could not be determined.');
