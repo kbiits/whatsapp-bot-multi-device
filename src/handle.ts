@@ -2,11 +2,12 @@ import { isJidGroup, MessageType, MessageUpsertType, proto, WASocket } from 'bai
 import escapeRegExp from "lodash.escaperegexp";
 import logger from "./logger";
 import { ResolverFunction, ResolverResult } from "./types/resolver";
+import { isBlacklistedMessage } from "./utils/blacklist";
 import checkPrefix from "./utils/checkPrefix";
+import isDeveloper from "./utils/isDeveloper";
 import { regexCleanParticipant } from "./utils/getAllparticipantsOfGroup";
 import { getResolver, getResolverWithoutPrefix } from "./utils/resolve";
 
-const developerNumbers = JSON.parse(process.env.DEVELOPER_WHATSAPP_NUMBER);
 const isDevelopment = process.env.IS_DEVELOPMENT?.toLowerCase() !== 'false';
 const shouldMuteWhenInDevelopment = process.env.MUTE_BOT_WHEN_DEVELOPMENT?.toLowerCase() !== 'false';
 const shouldSendWarnIfInDevelopment = process.env.SEND_WARN_IF_IN_DEVELOPMENT?.toLowerCase() === 'true';
@@ -17,8 +18,21 @@ export type WAMessageUpsert = {
     type: MessageUpsertType,
 }
 
+// escape hatch: a developer who blacklisted themselves can still run any "blacklist" command
+const isDeveloperBlacklistCommand = (msg: proto.IWebMessageInfo): boolean => {
+    const remoteJid = msg.key.remoteJid;
+    const sender = isJidGroup(remoteJid) ? (msg.participant || msg.key.participant) : remoteJid;
+    const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text || '';
+    return isDeveloper(sender) && /^\s*\/\S+\s+blacklists?\b/i.test(text);
+};
+
 const handle = async (msgs: WAMessageUpsert, sock: WASocket) => {
     msgs.messages.forEach(async msg => {
+        // must run before readMessages so blacklisted senders never get a read receipt
+        if (isBlacklistedMessage(msg) && !isDeveloperBlacklistCommand(msg)) {
+            logger.debug(`ignoring message from blacklisted sender, chat: ${msg.key.remoteJid}`);
+            return;
+        }
         sock.readMessages([msg.key]);
         if (!msg.message) return;
         if (msg.key.fromMe) return;
@@ -78,7 +92,7 @@ const handle = async (msgs: WAMessageUpsert, sock: WASocket) => {
         if (
             isDevelopment
             && shouldMuteWhenInDevelopment
-            && !developerNumbers.includes(isFromGroup ? participant : jid)
+            && !isDeveloper(isFromGroup ? participant : jid)
         ) {
             if (!shouldSendWarnIfInDevelopment) {
                 return;

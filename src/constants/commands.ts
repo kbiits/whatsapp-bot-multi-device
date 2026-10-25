@@ -19,6 +19,9 @@ import { gcalSetup } from '../handlers/gcal/setup';
 import { gcalStatus } from '../handlers/gcal/status';
 import { CommandMap } from '../types/command';
 import sendN8nWebhook from '../handlers/n8n/n8n';
+import { addBlacklist } from '../handlers/blacklist/addBlacklist';
+import { listBlacklist } from '../handlers/blacklist/listBlacklist';
+import { removeBlacklist } from '../handlers/blacklist/removeBlacklist';
 
 export const commands: CommandMap = {
     '^AI (.+)$': sendN8nWebhook,
@@ -50,4 +53,8 @@ export const commands: CommandMap = {
     '^gcal +setup +(\\S+) +(\\S+) +(\\S+)$': gcalSetup,
     '^gcal +(?:remove|delete)$': gcalRemove,
     '^gcal +status$': gcalStatus,
+
+    '^blacklists? +add +([\\s\\S]+)$': addBlacklist,
+    '^blacklists? +(?:remove|delete) +([\\s\\S]+)$': removeBlacklist,
+    '^blacklists?(?: +list)?$': listBlacklist,
 };

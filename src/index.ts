@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import logger from './logger';
 import sock from './sock';
 import bootstrapAPI from './api';
+import { loadBlacklist } from './utils/blacklist';
 
 const DB_URI = process.env.MONGODB_URI || null;
 if (!DB_URI) {
@@ -54,6 +55,9 @@ process.on("SIGTERM", gracefullyShutdown);
         logger.info("Connecting to db...");
         const mongooseConnection = await mongoose.connect(DB_URI);
         logger.info("db connected");
+
+        // load before the socket connects so offline messages are filtered too
+        await loadBlacklist();
 
         // start whatsapp connection
         await sock.connect()

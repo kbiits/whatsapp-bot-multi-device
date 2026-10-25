@@ -14,6 +14,7 @@ Lightweight Whatsapp bot with reminders feature based on [baileys](https://githu
 | Random Memes (from reddit) | ✔️ |
 | Random Quotes | ✔️ |
 | Love meter | ✔️ |
+| Blacklist numbers | ✔️ |
 | Voting | :x: |
 
 
@@ -81,3 +82,15 @@ Command List -> should match this format /{prefix} {command}
 
     - users in role :name
         (See all users assigned to the role)
+
+- blacklist (developer only, numbers from DEVELOPER_WHATSAPP_NUMBER)
+    - blacklist add :numbers...
+        (Ignore every message from these numbers, no read receipt is sent. Use digits with country code, or mention users)
+
+    - blacklist remove :numbers...
+        (Remove numbers from the blacklist)
+
+    - blacklist list
+        (See all blacklisted numbers)
+
+See [docs/ONBOARDING.md](docs/ONBOARDING.md) for architecture and development notes.

@@ -94,6 +94,18 @@ const helps = [
         'gcal status',
         '(Check your Google Calendar configuration)'
     ],
+    [
+        'blacklist add _{numbers or mentions}_',
+        '(Developer only. Ignore all messages from these numbers, e.g. blacklist add 6281234567890)'
+    ],
+    [
+        'blacklist remove _{numbers or mentions}_',
+        '(Developer only. Remove numbers from the blacklist)'
+    ],
+    [
+        'blacklist list',
+        '(Developer only. See all blacklisted numbers)'
+    ],
 ];
 
 const buildHelpMessage = (prefix: string): string => {
